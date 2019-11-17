@@ -102,13 +102,14 @@ class Spotify
         $currentItem = null;
 
         $ignore = ['3mimnm9tYwKSQrvsl5UjmD', '2PsBxJnNUsYlUbRjKxhZyW'];
+
         foreach ($obj->items as $item) {
             if ($item->popularity < $minPopularity && !in_array($item->id, $ignore)) {
                 $minPopularity = $item->popularity;
                 $currentItem = $item;
             }
         }
-        //\dd($currentItem);
+
         return $currentItem;
     }
 

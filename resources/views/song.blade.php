@@ -39,24 +39,28 @@
     <div class="container pt-16 px-10 mx-auto">
         @if ($name)
         <div class="md:flex">
-            <div class="flex flex-1 flex-col justify-center text-center items-center">
-                <h2 class="text-2xl">Your song is:</h2>
-                <div><img src="{{$song->album->images[1]->url}}" class="my-6"></div>
-                <h1 class="text-4xl">{{$song->name}}</h1>
-                <h2 class="text-3xl">by {{$song->artists[0]->name}}</h2>
-            </div>
-            <div class="flex flex-1 flex-col items-center mt-16 mb-10">
-                <h2 class="text-xl">Your song's popularity is:</h2>
-                <h1 class="text-4xl bg-blue-500 text-white font-bold py-2 px-5 rounded my-5">{{$song->popularity}}</h1>
-                <div class="text-left pb-10">
-                    <p class="my-1"><span class="bg-blue-300 text-white px-2 mr-3 rounded font-bold">80-100</span> Corporate Pawn</p>
-                    <p class="my-1"><span class="bg-blue-400 text-white px-2 mr-3 rounded font-bold">60-79</span> Mainstream Listener</p>
-                    <p class="my-1"><span class="bg-blue-500 text-white px-2 mr-3 rounded font-bold">40-59</span> Alt-Curious</p>
-                    <p class="my-1"><span class="bg-blue-600 text-white px-2 mr-3 rounded font-bold">20-39</span> Indie Minded</p>
-                    <p class="my-1"><span class="bg-blue-700 text-white px-2 mr-3 rounded font-bold">0-19</span> Hipster Overload</p>
+            @if ($song)
+                <div class="flex flex-1 flex-col justify-center text-center items-center">
+                    <h2 class="text-2xl">Your song is:</h2>
+                    <div><img src="{{$song->album->images[1]->url}}" class="my-6"></div>
+                    <h1 class="text-4xl">{{$song->name}}</h1>
+                    <h2 class="text-3xl">by {{$song->artists[0]->name}}</h2>
                 </div>
-                <a class="modal-open text-sm underline" href="/">How this works</a>
-            </div>
+                <div class="flex flex-1 flex-col items-center mt-16 mb-10">
+                    <h2 class="text-xl">Your song's popularity is:</h2>
+                    <h1 class="text-4xl bg-blue-500 text-white font-bold py-2 px-5 rounded my-5">{{$song->popularity}}</h1>
+                    <div class="text-left pb-10">
+                        <p class="my-1"><span class="bg-blue-300 text-white px-2 mr-3 rounded font-bold">80-100</span> Corporate Pawn</p>
+                        <p class="my-1"><span class="bg-blue-400 text-white px-2 mr-3 rounded font-bold">60-79</span> Mainstream Listener</p>
+                        <p class="my-1"><span class="bg-blue-500 text-white px-2 mr-3 rounded font-bold">40-59</span> Alt-Curious</p>
+                        <p class="my-1"><span class="bg-blue-600 text-white px-2 mr-3 rounded font-bold">20-39</span> Indie Minded</p>
+                        <p class="my-1"><span class="bg-blue-700 text-white px-2 mr-3 rounded font-bold">0-19</span> Hipster Overload</p>
+                    </div>
+                    <a class="modal-open text-sm underline" href="/">How this works</a>
+                </div>
+            @else
+                <div>You don't have a song. You need to <a class="underline" href="https://www.spotify.com">listen to more music</a>!</div>
+            @endif
         </div>
         @else
         <section class="pb-10">
