@@ -12,5 +12,10 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/mysong');
 });
+Route::get('/mysong', 'HomeController@song');
+
+Route::get('logout', 'Auth\SpotifyController@logout');
+Route::get('login/spotify', 'Auth\SpotifyController@redirectToProvider');
+Route::get('login/spotify/callback', 'Auth\SpotifyController@handleProviderCallback');
