@@ -42,10 +42,10 @@
             <div class="flex flex-1 flex-col justify-center text-center items-center">
                 <h2 class="text-2xl">Your song is:</h2>
                 <div><img src="{{$song->album->images[1]->url}}" class="my-6"></div>
-                <h1 class="text-5xl">{{$song->name}}</h1>
+                <h1 class="text-4xl">{{$song->name}}</h1>
                 <h2 class="text-3xl">by {{$song->artists[0]->name}}</h2>
             </div>
-            <div class="flex flex-1 flex-col items-center mt-16">
+            <div class="flex flex-1 flex-col items-center mt-16 mb-10">
                 <h2 class="text-xl">Your song's popularity is:</h2>
                 <h1 class="text-4xl bg-blue-500 text-white font-bold py-2 px-5 rounded my-5">{{$song->popularity}}</h1>
                 <div class="text-left pb-10">
@@ -61,8 +61,8 @@
         @else
         <section class="pb-10">
             <div id="search" class="inner">
-                <h1 class="text-4xl">What's Your Song?</h1>
-                <h2 class="text-2xl">What song most distinguishes your listening tastes from others? Click below to find out.</h2>
+                <h1 class="text-3xl">What's Your Song?</h1>
+                <h2 class="text-xl">What song most distinguishes your listening tastes? Click below to find out.</h2>
                 <button id="loginbtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-10">Find My Song</button>
             </div>
         </section>
