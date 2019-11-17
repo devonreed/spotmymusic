@@ -54,6 +54,9 @@ class SpotifyController extends Controller
     public function handleProviderCallback(Request $request)
     {
         $input = $request->all();
+        if (array_key_exists('error', $input)) {
+            return redirect('/');
+        }
 
         $response = Socialite::driver('spotify')->getAccessTokenResponse($input['code']);
 
