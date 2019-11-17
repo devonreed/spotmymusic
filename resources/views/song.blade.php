@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-	<title>Custom NYC Spotify Playlists</title>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<meta name="description" content="Custom NYC Spotify Playlists Updated Daily"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta itemprop="name" content="Custom NYC Spotify Playlists">
-    <meta itemprop="description" content="Custom NYC venue playlists on Spotify, updated daily">
+    <title>What's Your Song?</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="What unique song identifies you on Spotify?"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta itemprop="name" content="What's Your Song?">
+    <meta itemprop="description" content="What unique song identifies you on Spotify?">
     
     <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js" integrity="sha256-XF29CBwU1MWLaGEnsELogU6Y6rcc5nCkhhx89nFMIDQ=" crossorigin="anonymous"></script>
 
 </head>
@@ -38,8 +38,8 @@
 
     <div class="container pt-16 px-10 mx-auto">
         @if ($name)
-        <div class="flex">
-            <div class="flex flex-1 flex-col justify-center items-center">
+        <div class="md:flex">
+            <div class="flex flex-1 flex-col justify-center text-center items-center">
                 <h2 class="text-2xl">Your song is:</h2>
                 <div><img src="{{$song->album->images[1]->url}}" class="my-6"></div>
                 <h1 class="text-5xl">{{$song->name}}</h1>
