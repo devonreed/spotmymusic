@@ -17,4 +17,5 @@ mix.js('resources/js/app.js', 'public/js')
     .options({
         processCssUrls: false,
         postCss: [ tailwindcss('./tailwind.js') ],
-    });
+    })
+    .copyDirectory('resources/images', 'public/images');
