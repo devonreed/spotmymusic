@@ -8,11 +8,15 @@ class Spotify
 
     const TRACK_API_URL = 'https://api.spotify.com/v1/artists/{id}/top-tracks?country=US';
 
+    const SINGLE_TRACK_API_URL = 'https://api.spotify.com/v1/tracks/{id}';
+
     const PLAYLIST_API_URL = 'https://api.spotify.com/v1/users/{userId}/playlists/{playlistId}/tracks';
 
     const USER_URL = 'https://api.spotify.com/v1/me';
 
     const REPRESENTATIVE_URL = 'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50';
+
+    const SEARCH_URL = 'https://api.spotify.com/v1/search?type=track&q={query}';
 
     private $token;
 
@@ -63,6 +67,30 @@ class Spotify
         }
     }
 
+    protected function searchForTrack($artist, $song)
+    {
+        $searchUrl = str_replace('{query}', urlencode("$artist $song"), self::SEARCH_URL);
+
+        $ch = curl_init();
+        $timeout = 5;
+        curl_setopt($ch, CURLOPT_URL, $searchUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_POST, 0);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        $obj = json_decode($result);
+        if (!empty($obj->tracks) && !empty($obj->tracks->items)) {
+            foreach ($obj->tracks->items as $track) {
+                if ($track->name === $song && $track->artists[0]->name === $artist) {
+                    return $track;
+                }
+            }
+        }
+    }
+
     /**
      * Gets the user
      *
@@ -101,15 +129,18 @@ class Spotify
         $minPopularity = 101;
         $currentItem = null;
 
-        $ignore = ['3mimnm9tYwKSQrvsl5UjmD', '2PsBxJnNUsYlUbRjKxhZyW'];
+        $ignore = ['You Be My Heart', 'Long, Endless Parade', 'The Bigtop (Original Motion Picture Soundtrack)'];
 
-        foreach ($obj->items as $item) {
-            if ($item->popularity < $minPopularity && !in_array($item->id, $ignore)) {
+        foreach ($obj->items as $ogItem) {
+            if (in_array($ogItem->album->name, $ignore)) {
+                continue;
+            }
+            $item = $this->searchForTrack($ogItem->artists[0]->name, $ogItem->name);
+            if ($item && $item->popularity < $minPopularity) {
                 $minPopularity = $item->popularity;
-                $currentItem = $item;
+                $currentItem = $ogItem;
             }
         }
-
         return $currentItem;
     }
 
