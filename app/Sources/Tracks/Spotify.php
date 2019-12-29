@@ -13,6 +13,7 @@ class Spotify
     const SEARCH_URL = 'https://api.spotify.com/v1/search?type=track&q={query}';
 
     const CREATE_PLAYLIST_API_URL = 'https://api.spotify.com/v1/me/playlists';
+    const READ_PLAYLIST_URL = 'https://api.spotify.com/v1/playlists/{playlistId}';
     const PLAYLIST_API_URL = 'https://api.spotify.com/v1/playlists/{playlistId}/tracks';
     const USER_URL = 'https://api.spotify.com/v1/me';
     const REPRESENTATIVE_URL = 'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50';
@@ -223,14 +224,39 @@ class Spotify
         return $currentItem;
     }
 
+    /**
+     * Verifies that a playlist still exists and that the user has access to it
+     *
+     * @return bool - True if the playlist is valid
+     */
+    public function checkPlaylist($spotifyPlaylistId)
+    {
+        $ch = curl_init();
+        $timeout = 5;
+        $playlistUrl = str_replace('{playlistId}', $spotifyPlaylistId, self::READ_PLAYLIST_URL);
+        curl_setopt($ch, CURLOPT_URL, $playlistUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        $obj = json_decode($result);
+        return !property_exists($obj, 'error');
+    }
+
     public function createPlaylist($spotifyUserId)
     {
         $ch = curl_init();
         $timeout = 5;
+        $playlistTitle = 'NYC Today';
+        if (env('APP_ENV') !== 'production') {
+            $playlistTitle .= ' Development';
+        }
         curl_setopt($ch, CURLOPT_URL, self::CREATE_PLAYLIST_API_URL);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['name' => 'NYC Today', 'public' => true]));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['name' => $playlistTitle, 'public' => true]));
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
         $result = curl_exec($ch);

@@ -43,30 +43,13 @@
     @endif
     <div class="container pt-24 px-10 mx-auto">
         @if ($name)
-        <section id="header">
-            <div id="search" class="inner">
-                @foreach ($venues as $venue)
-                    <div><label><input class="venue" type="checkbox" value="{{$venue['id']}}" {{$venue['checked']}}>&nbsp;{{$venue['name']}}</label></div>
-                @endforeach
-                <ul class="actions">
-                    <li id="save">
-                        <button id="savebtn">Save</button>
-                    </li>
-                </ul>
-            </div>
-        </section>
+            @foreach ($venues as $venue)
+                <div><label><input class="venue" type="checkbox" value="{{$venue['id']}}" {{$venue['checked']}}>&nbsp;{{$venue['name']}}</label></div>
+            @endforeach
         @else
-        <section id="header">
-            <div id="search" class="inner">
-                <h2>Connect to Spotify</h2>
-                <p id="infotext">Click the login button to connect to grant access to create a playlist on your Spotify account.</p>
-                <ul class="actions">
-                    <li id="upload">
-                        <button id="loginbtn">Login</button>
-                    </li>
-                </ul>
-            </div>
-        </section>
+            <h1 class="text-3xl">Login with Spotify</h1>
+            <p id="infotext">Click the login button to connect to Spotify and grant access to create a playlist on your Spotify account.</p>
+            <button id="loginbtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-10">Login</button>
         @endif
     </div>
 
@@ -79,20 +62,22 @@
     </script>
     @if ($name)
     <script>
-        document.getElementById('savebtn').onclick = function (e) {
+        $('.venue').change(function (e) {
             var venues = $('.venue:checked').map(function() {
                 return $(this).val();
             }).get();
             console.log(venues);
             $.post("/venues", { venue_ids: venues });
-        };
-    </script>
-    @else
-    <script>
-        document.getElementById('loginbtn').onclick = function (e) {
-            document.location = "/login/spotify";
-        };
+        });
     </script>
     @endif
+    <script>
+        var $loginBtn = $('#loginbtn').click(function (e) {
+            document.location = "/login/spotify?app=playlist";
+        })
+        var $logoutBtn = $('#logoutbtn').click(function (e) {
+            document.location = "/logout";
+        })
+    </script>
 </body>
 </html>

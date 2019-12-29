@@ -76,9 +76,15 @@ class SpotifyController extends Controller
         $app = $request->session()->get('app');
         if ($app === 'playlist') {
             $s = new Spotify($u->spotify_refresh_token);
-            $playlist = $s->createPlaylist($u->spotify_user_id);
-            $u->spotify_playlist_id = $playlist->id;
-            $u->save();
+            $playlistExists = false;
+            if ($u->spotify_playlist_id) {
+                $playlistExists = $s->checkPlaylist($u->spotify_playlist_id);
+            }
+            if (!$playlistExists) {
+                $playlist = $s->createPlaylist($u->spotify_user_id);
+                $u->spotify_playlist_id = $playlist->id;
+                $u->save();
+            }
         }
 
         $request->session()->put('id', $u->spotify_user_id);
