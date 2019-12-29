@@ -42,7 +42,7 @@ class ExportPlaylist extends Command
     public function handle()
     {
         $this->info('Sending to Spotify');
-        $users = User::get();
+        $users = User::whereNotNull('spotify_playlist_id')->get();
         foreach ($users as $user) {
             $userVenues = $user->venues()->pluck('venue_id')->all();
             $items = DB::table('shows')
