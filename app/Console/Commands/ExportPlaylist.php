@@ -45,6 +45,9 @@ class ExportPlaylist extends Command
         $users = User::whereNotNull('spotify_playlist_id')->get();
         foreach ($users as $user) {
             $userVenues = $user->venues()->pluck('venue_id')->all();
+            if (empty($userVenues)) {
+                continue;
+            }
             $items = DB::table('shows')
                 ->where('shows.show_date', Carbon::now()->toDateString())
                 ->join('bands', 'bands.id', '=', 'shows.band_id')
