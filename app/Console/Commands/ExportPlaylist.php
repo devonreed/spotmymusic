@@ -58,7 +58,7 @@ class ExportPlaylist extends Command
             $spotify_ids = $items->pluck('top_spotify_track');    
             $spotify = new Spotify($user->spotify_refresh_token);
             $spotify->replacePlaylist($user->spotify_user_id, $user->spotify_playlist_id, $spotify_ids->all());
-            $this->info('Spotify playlist for ' , $user->spotify_user_id . ' refreshed ' . $user->spotify_playlist_id . ' with ' . serialize($spotify_ids));
+            $this->info('Spotify playlist for ' . $user->spotify_user_id . ' refreshed ' . $user->spotify_playlist_id . ' with ' . serialize($spotify_ids));
         }
         
     }
