@@ -7,6 +7,7 @@ use App\Models\Show;
 use App\Sources\Shows\OhMyRockness;
 use App\Sources\Shows\TicketFly;
 use App\Sources\Shows\TicketWeb;
+use App\Sources\Shows\EventBrite;
 use App\Sources\Tracks\SoundCloud;
 use App\Sources\Tracks\Spotify;
 use Carbon\Carbon;
@@ -33,6 +34,7 @@ class GeneratePlaylist extends Command
         OhMyRockness::class,
         TicketFly::class,
         TicketWeb::class,
+        EventBrite::class,
     ];
 
     /**

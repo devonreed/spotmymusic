@@ -10,7 +10,7 @@
     <meta itemprop="description" content="Custom NYC venue playlists on Spotify, updated daily">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     
-    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Libre+Franklin" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}" />
     
@@ -22,34 +22,53 @@
 		}
 	</style>
 </head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal" style="font-family: Poppins">
+<body class="bg-gray-100 font-sans leading-normal tracking-normal" style="font-family: Libre Franklin">
     @if ($name)
-    <section id="header">
-        <div id="search" class="inner">
-            <h2>Logged in as {{ $name }}</h2>
-                @foreach ($venues as $venue)
-                    <label><input class="venue" type="checkbox" value="{{$venue['id']}}" {{$venue['checked']}}>{{$venue['name']}}</label>
-                @endforeach
-            <ul class="actions">
-                <li id="save">
-                    <button id="savebtn">Save</button>
-                </li>
-            </ul>
+    <nav id="header" class="bg-white fixed w-full z-10 top-0 shadow">
+        <div class="w-full container mx-auto flex flex-wrap items-center mt-0 pt-3 pb-3">
+                
+            <div class="w-1/2 pl-2 md:pl-0">
+                <a class="text-gray-900 xl:text-xl no-underline hover:no-underline font-bold" href="/">Spot My Music</a>
+            </div>
+            <div class="w-1/2 pr-0">
+                <div class="flex relative inline-block float-right">
+                    <div class="relative text-sm">
+                        <span>Logged in as {{ $name }}</span>
+                        &nbsp;&nbsp;|&nbsp;&nbsp;<button id="logoutbtn" class="items-center focus:outline-none underline"><span>Logout</span></button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
-    @else
-	<section id="header">
-		<div id="search" class="inner">
-			<h2>Connect to Spotify</h2>
-			<p id="infotext">Click the login button to connect to grant access to create a playlist on your Spotify account.</p>
-			<ul class="actions">
-				<li id="upload">
-					<button id="loginbtn">Login</button>
-				</li>
-			</ul>
-		</div>
-    </section>
+    </nav>
     @endif
+    <div class="container pt-24 px-10 mx-auto">
+        @if ($name)
+        <section id="header">
+            <div id="search" class="inner">
+                @foreach ($venues as $venue)
+                    <div><label><input class="venue" type="checkbox" value="{{$venue['id']}}" {{$venue['checked']}}>&nbsp;{{$venue['name']}}</label></div>
+                @endforeach
+                <ul class="actions">
+                    <li id="save">
+                        <button id="savebtn">Save</button>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        @else
+        <section id="header">
+            <div id="search" class="inner">
+                <h2>Connect to Spotify</h2>
+                <p id="infotext">Click the login button to connect to grant access to create a playlist on your Spotify account.</p>
+                <ul class="actions">
+                    <li id="upload">
+                        <button id="loginbtn">Login</button>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        @endif
+    </div>
 
     <script>
         $.ajaxSetup({
