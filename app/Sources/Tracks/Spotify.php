@@ -20,14 +20,14 @@ class Spotify
 
     private $token;
 
-    public function __construct($refreshToken, $publicOnly = false)
+    public function __construct($refreshToken = null)
     {
         $ch = curl_init();
         $timeout = 5;
         curl_setopt($ch, CURLOPT_URL, 'https://accounts.spotify.com/api/token');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        if ($publicOnly) {
+        if (!$refreshToken) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
         } else {
             curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=refresh_token&refresh_token=' . $refreshToken);
@@ -59,6 +59,8 @@ class Spotify
         if ($band->top_spotify_track && $band->updated_at > (new Carbon())->subDays(30)) {
             return;
         }
+        $band->spotify_search_failed = 0;
+        $band->save();
 
         $spotifyId = $this->getSpotifyId($band);
         if (!$spotifyId) {
@@ -150,7 +152,7 @@ class Spotify
             curl_setopt($ch, CURLOPT_URL, $searchUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-            //curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
             $result = curl_exec($ch);
             curl_close($ch);
 
@@ -159,10 +161,10 @@ class Spotify
                 $artist = $obj->artists->items[0];
                 $band->spotify_id = $artist->id;
             } else {
-                $band->spotify_search_failed = true;
+                //$band->spotify_search_failed = true;
             }
         } catch (\Exception $e) {
-            $band->spotify_search_failed = true;
+            //$band->spotify_search_failed = true;
         }
             
         $band->save();

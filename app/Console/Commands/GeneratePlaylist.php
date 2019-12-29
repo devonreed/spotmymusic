@@ -89,7 +89,7 @@ class GeneratePlaylist extends Command
     protected function loadTracks()
     {
         $this->info('Importing tracks');
-        $spot = new Spotify(env('SPOTIFY_REFRESH_TOKEN'), true);
+        $spot = new Spotify();
 
         $shows = Show::where('show_date', '>', (new Carbon())->subDays(30))->get();
         $bar = $this->output->createProgressBar(count($shows));
