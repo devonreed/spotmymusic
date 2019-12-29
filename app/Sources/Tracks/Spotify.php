@@ -2,6 +2,9 @@
 
 namespace App\Sources\Tracks;
 
+use App\Models\Band;
+use Carbon\Carbon;
+
 class Spotify
 {
     const SEARCH_API_URL = 'https://api.spotify.com/v1/search?q={search}&type=artist';
@@ -10,7 +13,9 @@ class Spotify
 
     const SINGLE_TRACK_API_URL = 'https://api.spotify.com/v1/tracks/{id}';
 
-    const PLAYLIST_API_URL = 'https://api.spotify.com/v1/users/{userId}/playlists/{playlistId}/tracks';
+    const CREATE_PLAYLIST_API_URL = 'https://api.spotify.com/v1/me/playlists';
+
+    const PLAYLIST_API_URL = 'https://api.spotify.com/v1/playlists/{playlistId}/tracks';
 
     const USER_URL = 'https://api.spotify.com/v1/me';
 
@@ -31,7 +36,6 @@ class Spotify
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Basic ' . base64_encode(env('SPOTIFY_CLIENT_ID').':'.env('SPOTIFY_CLIENT_SECRET'))));
         $result = curl_exec($ch);
         curl_close($ch);
-
         $obj = json_decode($result);
         $this->token = $obj->access_token;
     }
@@ -40,6 +44,37 @@ class Spotify
     {
         return $this->token;
     }
+
+    /**
+     * Saves the most played track for a band to the database
+     *
+     * @param Band $band
+     */
+    public function importTopTrack(Band $band)
+    {
+        if ($band->ignore) {
+            return;
+        }
+
+        // Use the existing top track if it isn't too stale
+        if ($band->top_spotify_track && $band->updated_at > (new Carbon())->subDays(30)) {
+            return;
+        }
+
+        $spotifyId = $this->getSpotifyId($band);
+        if (!$spotifyId) {
+            return;
+        }
+
+        $topTrack = $this->getTopTrack($spotifyId);
+        if (!$topTrack) {
+            return;
+        }
+
+        $band->top_spotify_track = $topTrack->id;
+        $band->save();
+    }
+
 
     /**
      * Gets the top tracks for a user
@@ -89,6 +124,49 @@ class Spotify
                 }
             }
         }
+    }
+
+    protected function getSpotifyId(Band $band)
+    {
+        if (!$band->spotify_id && !$band->spotify_search_failed) {
+            $this->searchForBandId($band);
+        }
+
+        return $band->spotify_id;
+    }
+
+    /**
+     * Search Spotify for a band. Adds the Spotify id to the band
+     * if found.
+     *
+     * @param Band $band
+     */
+    protected function searchForBandId(Band $band)
+    {
+        $searchUrl = str_replace('{search}', urlencode($band->name), self::SEARCH_API_URL);
+
+        try {
+            $ch = curl_init();
+            $timeout = 5;
+            curl_setopt($ch, CURLOPT_URL, $searchUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            $obj = json_decode($result);
+            if (!empty($obj->artists->items)) {
+                $artist = $obj->artists->items[0];
+                $band->spotify_id = $artist->id;
+            } else {
+                $band->spotify_search_failed = true;
+            }
+        } catch (\Exception $e) {
+            $band->spotify_search_failed = true;
+        }
+            
+        $band->save();
     }
 
     /**
@@ -142,6 +220,23 @@ class Spotify
             }
         }
         return $currentItem;
+    }
+
+    public function createPlaylist($spotifyUserId)
+    {
+        $ch = curl_init();
+        $timeout = 5;
+        curl_setopt($ch, CURLOPT_URL, self::CREATE_PLAYLIST_API_URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['name' => 'NYC Today', 'public' => true]));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        $obj = json_decode($result);
+        return $obj;
     }
 
     public function replacePlaylist($spotifyUserId, $spotifyPlaylistId, array $ids)

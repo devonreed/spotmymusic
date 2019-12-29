@@ -11,9 +11,28 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect('/mysong');
+Route::get('/', 'HomeController@dashboard');
+Route::post('/venues', 'UserController@saveVenues');
+
+Route::get('refresh', function () {
+    if (env('APP_ENV') !== 'production') {
+        \Illuminate\Support\Facades\Artisan::call('playlist:generate');
+        return response('OK', 200);
+    } else {
+        return response('Nope', 403);
+    }
 });
+
+
+Route::get('export', function () {
+    if (env('APP_ENV') !== 'production') {
+        \Illuminate\Support\Facades\Artisan::call('playlist:export');
+        return response('OK', 200);
+    } else {
+        return response('Nope', 403);
+    }
+});
+
 Route::get('/mysong', 'HomeController@song');
 
 Route::get('logout', 'Auth\SpotifyController@logout');

@@ -12,6 +12,11 @@ class User extends Model
 {
     protected $fillable = ['spotify_user_id'];
 
+    public function venues()
+    {
+        return $this->belongsToMany('App\Models\Venue', 'user_venues', 'user_id', 'venue_id');
+    }
+
     public function setSpotifyRefreshTokenAttribute($value)
     {
         $this->attributes['spotify_refresh_token'] = Crypt::encrypt($value);

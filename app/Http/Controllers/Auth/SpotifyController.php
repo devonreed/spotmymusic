@@ -33,11 +33,12 @@ class SpotifyController extends Controller
         $app = $request->input('app') ?? 'playlist';
         $next = $request->input('next') ?? '';
 
+        $request->session()->put('app', $app);
         $request->session()->put('next', $next);
 
         $permissions = [
             'mysong' => 'user-top-read',
-            'playlist' => 'playlist-modify-public', 'playlist-modify-private',
+            'playlist' => 'playlist-modify', 'playlist-modify-public', 'playlist-modify-private',
         ];        
         
         return Socialite::driver('spotify')
@@ -67,14 +68,18 @@ class SpotifyController extends Controller
 
         $u = User::firstOrNew(['spotify_user_id' => $user->id]);
 
-        if (!$u->exists) {
-            // create playlist
-        }
-
         $u->spotify_refresh_token = $response['refresh_token'];
         $u->spotify_user_id = $user->id;
         $u->spotify_user_display_name = $user->display_name;
         $u->save();
+
+        $app = $request->session()->get('app');
+        if ($app === 'playlist' && !$u->spotify_playlist_id) {
+            $s = new Spotify($u->spotify_refresh_token);
+            $playlist = $s->createPlaylist($u->spotify_user_id);
+            $u->spotify_playlist_id = $playlist->id;
+            $u->save();
+        }
 
         $request->session()->put('id', $u->spotify_user_id);
 
