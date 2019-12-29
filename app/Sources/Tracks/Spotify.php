@@ -8,31 +8,30 @@ use Carbon\Carbon;
 class Spotify
 {
     const SEARCH_API_URL = 'https://api.spotify.com/v1/search?q={search}&type=artist';
-
     const TRACK_API_URL = 'https://api.spotify.com/v1/artists/{id}/top-tracks?country=US';
-
     const SINGLE_TRACK_API_URL = 'https://api.spotify.com/v1/tracks/{id}';
+    const SEARCH_URL = 'https://api.spotify.com/v1/search?type=track&q={query}';
 
     const CREATE_PLAYLIST_API_URL = 'https://api.spotify.com/v1/me/playlists';
-
     const PLAYLIST_API_URL = 'https://api.spotify.com/v1/playlists/{playlistId}/tracks';
-
     const USER_URL = 'https://api.spotify.com/v1/me';
-
     const REPRESENTATIVE_URL = 'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50';
 
-    const SEARCH_URL = 'https://api.spotify.com/v1/search?type=track&q={query}';
 
     private $token;
 
-    public function __construct($refreshToken)
+    public function __construct($refreshToken, $publicOnly = false)
     {
         $ch = curl_init();
         $timeout = 5;
         curl_setopt($ch, CURLOPT_URL, 'https://accounts.spotify.com/api/token');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=refresh_token&refresh_token=' . $refreshToken);
+        if ($publicOnly) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
+        } else {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=refresh_token&refresh_token=' . $refreshToken);
+        }
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Basic ' . base64_encode(env('SPOTIFY_CLIENT_ID').':'.env('SPOTIFY_CLIENT_SECRET'))));
         $result = curl_exec($ch);
         curl_close($ch);
@@ -151,7 +150,7 @@ class Spotify
             curl_setopt($ch, CURLOPT_URL, $searchUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
+            //curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->token));
             $result = curl_exec($ch);
             curl_close($ch);
 
@@ -245,7 +244,7 @@ class Spotify
         $searchUrl = str_replace('{playlistId}', $spotifyPlaylistId, $searchUrl);
 
         $counter = 0;
-        while ($counter < count($ids)) {
+        while ($counter === 0 || $counter < count($ids)) {
             $slice = array_slice($ids, $counter, 100);
             foreach ($slice as $index => $id) {
                 $slice[$index] = 'spotify:track:' . $id;
