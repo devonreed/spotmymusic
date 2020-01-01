@@ -22,7 +22,7 @@
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal" style="font-family: Libre Franklin">
     @if ($name)
-    <nav id="header" class="bg-white fixed w-full z-10 top-0 shadow">
+    <nav id="header" class="px-5 bg-white fixed w-full z-10 top-0 shadow">
         <div class="w-full container mx-auto flex flex-wrap items-center mt-0 pt-3 pb-3">
                 
             <div class="w-1/2 pl-2 md:pl-0">
