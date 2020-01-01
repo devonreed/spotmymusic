@@ -15,6 +15,7 @@ class UserController extends Controller
             $user = User::where('spotify_user_id', $id)->first();
             $ids = $request->get('venue_ids');
             $user->venues()->sync($ids);
+            $ids = $user->exportPlaylist();
         }
     }
 }

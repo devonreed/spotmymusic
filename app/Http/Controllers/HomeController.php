@@ -22,6 +22,7 @@ class HomeController extends Controller
                 return view('home', $session)->render();
             }
             $session['name'] = $user->spotify_user_display_name;
+            $session['playlist_id'] = $user->spotify_playlist_id;
 
             $venues = Venue::get(['name', 'id'])->toArray();
 

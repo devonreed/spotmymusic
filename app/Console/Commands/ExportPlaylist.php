@@ -3,10 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use DB;
-use Carbon\Carbon;
 use App\Models\User;
-use App\Sources\Tracks\Spotify;
 
 class ExportPlaylist extends Command
 {
@@ -44,20 +41,7 @@ class ExportPlaylist extends Command
         $this->info('Sending to Spotify');
         $users = User::whereNotNull('spotify_playlist_id')->get();
         foreach ($users as $user) {
-            $userVenues = $user->venues()->pluck('venue_id')->all();
-            if (empty($userVenues)) {
-                continue;
-            }
-            $items = DB::table('shows')
-                ->where('shows.show_date', Carbon::now()->toDateString())
-                ->join('bands', 'bands.id', '=', 'shows.band_id')
-                ->whereNotNull('bands.top_spotify_track')
-                ->whereIn('shows.venue_id', $userVenues)
-                ->get();
-
-            $spotify_ids = $items->pluck('top_spotify_track');    
-            $spotify = new Spotify($user->spotify_refresh_token);
-            $spotify->replacePlaylist($user->spotify_user_id, $user->spotify_playlist_id, $spotify_ids->all());
+            $spotify_ids = $user->exportPlaylist();
             $this->info('Spotify playlist for ' . $user->spotify_user_id . ' refreshed ' . $user->spotify_playlist_id . ' with ' . serialize($spotify_ids));
         }
         

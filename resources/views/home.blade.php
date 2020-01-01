@@ -28,13 +28,14 @@
         <div class="w-full container mx-auto flex flex-wrap items-center mt-0 pt-3 pb-3">
                 
             <div class="w-1/2 pl-2 md:pl-0">
-                <a class="text-gray-900 xl:text-xl no-underline hover:no-underline font-bold" href="/">Spot My Music</a>
+                <div><a class="text-gray-900 xl:text-xl no-underline hover:no-underline font-bold" href="/">Spot My Music</a></div>
+                <div><button id="gotoplaylist" class="text-xs bg-blue-500 hover:bg-blue-700 text-white font-bold px-1 rounded">View My Playlist</button></div>
             </div>
             <div class="w-1/2 pr-0">
                 <div class="flex relative inline-block float-right">
                     <div class="relative text-sm">
-                        <span>Logged in as {{ $name }}</span>
-                        &nbsp;&nbsp;|&nbsp;&nbsp;<button id="logoutbtn" class="items-center focus:outline-none underline"><span>Logout</span></button>
+                        <div><span>Logged in as {{ $name }}</span></div>
+                        <div><button id="logoutbtn" class="float-right focus:outline-none underline"><span>Logout</span></button></div>
                     </div>
                 </div>
             </div>
@@ -90,6 +91,10 @@
             document.location = "/logout";
         })
 
+        $('#gotoplaylist').click(function () {
+            window.open('https://open.spotify.com/playlist/{{$playlist_id}}');
+        })
+
         var openmodal = document.querySelectorAll('.modal-open')
         for (var i = 0; i < openmodal.length; i++) {
             openmodal[i].addEventListener('click', function (event) {
@@ -103,7 +108,7 @@
 
         var closemodal = document.querySelectorAll('.modal-close')
         for (var i = 0; i < closemodal.length; i++) {
-        closemodal[i].addEventListener('click', toggleModal)
+            closemodal[i].addEventListener('click', toggleModal)
         }
 
         document.onkeydown = function(evt) {
@@ -118,7 +123,6 @@
                 toggleModal()
             }
         };
-
 
         function toggleModal () {
             const body = document.querySelector('body')
