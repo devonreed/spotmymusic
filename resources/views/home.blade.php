@@ -81,6 +81,10 @@
             }).get();
             $.post("/venues", { venue_ids: venues });
         });
+
+        $('#gotoplaylist').click(function () {
+            window.open('https://open.spotify.com/playlist/{{$playlist_id}}');
+        })
     </script>
     @endif
     <script>
@@ -89,10 +93,6 @@
         })
         var $logoutBtn = $('#logoutbtn').click(function (e) {
             document.location = "/logout";
-        })
-
-        $('#gotoplaylist').click(function () {
-            window.open('https://open.spotify.com/playlist/{{$playlist_id}}');
         })
 
         var openmodal = document.querySelectorAll('.modal-open')
