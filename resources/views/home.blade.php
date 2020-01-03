@@ -9,6 +9,8 @@
     <meta itemprop="name" content="Custom NYC Spotify Playlists">
     <meta itemprop="description" content="Custom NYC venue playlists on Spotify, updated daily">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta property="og:image" content="http://spotmymusic.com/images/favicon-228.png">
+
     
     <link rel="icon" href="/images/favicon-32.png" sizes="32x32">
     <link rel="icon" href="/images/favicon-57.png" sizes="57x57">
@@ -17,6 +19,7 @@
     <link rel="icon" href="/images/favicon-128.png" sizes="128x128">
     <link rel="icon" href="/images/favicon-192.png" sizes="192x192">
     <link rel="icon" href="/images/favicon-228.png" sizes="228x228">
+    
 
     <link href="https://fonts.googleapis.com/css?family=Libre+Franklin" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
